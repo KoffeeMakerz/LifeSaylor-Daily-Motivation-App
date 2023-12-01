@@ -49,7 +49,7 @@ const PrivacyScreen = (props) => {
     </View>
   );
 };
-// test
+
 
 const styles = StyleSheet.create({
   container: {
