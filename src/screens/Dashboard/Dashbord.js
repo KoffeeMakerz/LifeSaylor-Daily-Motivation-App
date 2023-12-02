@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView,View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { Card } from '@rneui/themed';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+
 
 
 const Dashboard = ({ route }) => {
@@ -11,6 +13,8 @@ const Dashboard = ({ route }) => {
   const [greeting, setGreeting] = useState('');
   const [motivationTitle, setMotivationTitle] = useState('');
   const [userName, setUserName] = useState('');
+  const navigation = useNavigation();
+
 
   const motivationalQuotes = [
     "Seize the day; it's yours.",
@@ -124,7 +128,12 @@ const Dashboard = ({ route }) => {
           <Text style={styles.bottomNavItemText}>Discover</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.bottomNavItem}>
+        <TouchableOpacity
+  style={styles.bottomNavItem}
+  onPress={() => {
+    navigation.navigate('Settings'); // Navigate to the 'Settings' screen
+  }}
+>
           <Image source={require("../../../assets/icons/settingsIcon.png")} style={styles.bottomNavItemIcon} />
           <Text style={styles.bottomNavItemText}>Settings</Text>
         </TouchableOpacity>
