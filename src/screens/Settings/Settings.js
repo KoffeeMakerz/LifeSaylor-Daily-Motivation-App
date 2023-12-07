@@ -8,6 +8,9 @@ import {
   Modal,
   FlatList,
   TimePickerAndroid,
+  TextInput,
+  Image,
+  ScrollView,
 } from 'react-native';
 
 const SettingsScreen = ({ navigation }) => {
@@ -19,9 +22,16 @@ const SettingsScreen = ({ navigation }) => {
     Productivity: { checked: false, time: new Date() },
     Positivity: { checked: false, time: new Date() },
   });
+  const [showUserNameModal, setShowUserNameModal] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [notificationStatusMessage, setNotificationStatusMessage] = useState('');
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState('');
 
   const toggleNotifications = () => {
-    setNotificationsEnabled((prev) => !prev);
+    const newStatus = !notificationsEnabled;
+    setNotificationsEnabled(newStatus);
+    setNotificationStatusMessage(newStatus ? 'Notifications ON' : 'Notifications OFF');
   };
 
   const handleCheckboxToggle = (category) => {
@@ -49,54 +59,50 @@ const SettingsScreen = ({ navigation }) => {
     }
   };
 
+  const handleUserNameSave = () => {
+    setNotificationStatusMessage(`Username Saved: ${newUserName}`);
+    setShowUserNameModal(false);
+  };
+
+  const handleSaveAvatar = (avatar) => {
+    setNotificationStatusMessage(`New Avatar has been saved: ${avatar.name}`);
+    setShowAvatarModal(false);
+    setSelectedAvatar(avatar);
+  };
+
+  const avatarImages = [
+    { name: 'Avatar 1', source: require('../../../assets/icons/avatar1.png') },
+    { name: 'Avatar 2', source: require('../../../assets/icons/avatar2.png') },
+    { name: 'Avatar 3', source: require('../../../assets/icons/avatar3.png') },
+    { name: 'Avatar 4', source: require('../../../assets/icons/avatar4.png') },
+    { name: 'Avatar 5', source: require('../../../assets/icons/avatar5.png') },
+  ];
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Settings</Text>
 
-      <TouchableOpacity style={styles.settingItem}>
+      {/* Change Avatar Option */}
+      <TouchableOpacity
+        style={styles.settingItem}
+        onPress={() => setShowAvatarModal(true)}
+      >
         <Text style={styles.settingText}>Change Avatar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.settingItem}>
+      <TouchableOpacity
+        style={styles.settingItem}
+        onPress={() => setShowUserNameModal(true)}
+      >
         <Text style={styles.settingText}>Change User Name</Text>
       </TouchableOpacity>
 
-      {/* Change Motivation Time Option */}
       <TouchableOpacity
         style={styles.settingItem}
-        onPress={() => setShowMotivationModal(true)}
+        onPress={() => navigation.navigate('MotivationTimeScreen')}
       >
-        <Text style={styles.settingText}>Change Motivation Time</Text>
+        <Text style={styles.settingText}>Motivation Settings</Text>
       </TouchableOpacity>
-
-      {/* Motivation Categories */}
-      {showMotivationModal && (
-        <View style={styles.modalContainer}>
-          <FlatList
-            data={Object.keys(motivationTimes)}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
-              <View style={styles.checkboxContainer}>
-                <TouchableOpacity
-                  style={styles.checkboxItem}
-                  onPress={() => handleCheckboxToggle(item)}
-                >
-                  <Text style={styles.checkboxText}>{item}</Text>
-                </TouchableOpacity>
-
-                {motivationTimes[item].checked && (
-                  <TouchableOpacity
-                    style={styles.timePickerButton}
-                    onPress={() => showTimePicker(item)}
-                  >
-                    <Text style={styles.timePickerButtonText}>Set Time</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-          />
-        </View>
-      )}
 
       <View style={styles.settingItem}>
         <Text style={styles.settingText}>Notifications</Text>
@@ -108,22 +114,73 @@ const SettingsScreen = ({ navigation }) => {
         />
       </View>
 
+      {notificationStatusMessage !== '' && (
+        <Text style={styles.notificationStatus}>{notificationStatusMessage}</Text>
+      )}
+
       <TouchableOpacity
         style={styles.saveButton}
         onPress={() => {
-          // Implement save settings functionality or any other action
           console.log('Save button pressed', motivationTimes);
         }}
       >
         <Text style={styles.saveButtonText}>Save Settings</Text>
       </TouchableOpacity>
-    </View>
+
+      {/* Avatar Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showAvatarModal}
+        onRequestClose={() => setShowAvatarModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <FlatList
+            data={avatarImages}
+            keyExtractor={(_, index) => index.toString()}
+            numColumns={2}  // Display avatars in two columns
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.avatarItem}
+                onPress={() => handleSaveAvatar(item)}
+              >
+                <Image source={item.source} style={styles.avatarImage} />
+                <Text style={styles.avatarName}>{item.name}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
+
+      {/* User Name Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showUserNameModal}
+        onRequestClose={() => setShowUserNameModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <TextInput
+            style={styles.userNameInput}
+            placeholder="Enter new username"
+            value={newUserName}
+            onChangeText={(text) => setNewUserName(text)}
+          />
+          <TouchableOpacity
+            style={styles.saveUserNameButton}
+            onPress={handleUserNameSave}
+          >
+            <Text style={styles.saveButtonText}>Save User Name</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
@@ -147,35 +204,29 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  avatarItem: {
     padding: 10,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    width: '80%',
-    maxHeight: 300,
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 5,
+  avatarImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
-  checkboxItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  avatarName: {
+    marginTop: 5,
+    fontSize: 12,
+    color: '#333',
+    textAlign: 'center',
   },
-  checkboxText: {
+  notificationStatus: {
+    marginTop: 10,
     fontSize: 16,
     color: '#333',
-    marginLeft: 5,
-  },
-  timePickerButton: {
-    backgroundColor: '#72c17d',
-    padding: 8,
-    borderRadius: 5,
-  },
-  timePickerButtonText: {
-    color: 'white',
-    fontSize: 14,
   },
   saveButton: {
     marginTop: 20,
@@ -187,6 +238,18 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  userNameInput: {
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    width: '80%',
+  },
+  saveUserNameButton: {
+    backgroundColor: '#72c17d',
+    padding: 15,
+    borderRadius: 8,
   },
 });
 
