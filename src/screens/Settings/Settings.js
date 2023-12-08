@@ -12,8 +12,9 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [showMotivationModal, setShowMotivationModal] = useState(false);
   const [motivationTimes, setMotivationTimes] = useState({
@@ -27,6 +28,8 @@ const SettingsScreen = ({ navigation }) => {
   const [notificationStatusMessage, setNotificationStatusMessage] = useState('');
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState('');
+
+  const { navigate } = useNavigation(); // Hook to get navigation object
 
   const toggleNotifications = () => {
     const newStatus = !notificationsEnabled;
@@ -90,6 +93,7 @@ const SettingsScreen = ({ navigation }) => {
         <Text style={styles.settingText}>Change Avatar</Text>
       </TouchableOpacity>
 
+      {/* Change User Name Option */}
       <TouchableOpacity
         style={styles.settingItem}
         onPress={() => setShowUserNameModal(true)}
@@ -97,13 +101,15 @@ const SettingsScreen = ({ navigation }) => {
         <Text style={styles.settingText}>Change User Name</Text>
       </TouchableOpacity>
 
+      {/* Motivation Settings Option */}
       <TouchableOpacity
         style={styles.settingItem}
-        onPress={() => navigation.navigate('MotivationTimeScreen')}
+        onPress={() => navigate('MotivationTimeScreen')}
       >
         <Text style={styles.settingText}>Motivation Settings</Text>
       </TouchableOpacity>
 
+      {/* Notifications Option */}
       <View style={styles.settingItem}>
         <Text style={styles.settingText}>Notifications</Text>
         <Switch
@@ -114,10 +120,12 @@ const SettingsScreen = ({ navigation }) => {
         />
       </View>
 
+      {/* Notification Status */}
       {notificationStatusMessage !== '' && (
         <Text style={styles.notificationStatus}>{notificationStatusMessage}</Text>
       )}
 
+      {/* Save Settings Button */}
       <TouchableOpacity
         style={styles.saveButton}
         onPress={() => {
