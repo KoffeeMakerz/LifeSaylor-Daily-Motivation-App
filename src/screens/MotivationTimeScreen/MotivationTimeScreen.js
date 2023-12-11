@@ -48,14 +48,12 @@ const MotivationTimeScreen = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Motivation Time Settings</Text>
 
-      <View style={styles.addMotivationContainer}>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => setShowAddMotivationModal(true)}
-        >
-          <Text style={styles.buttonText}>Add Motivation</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setShowAddMotivationModal(true)}
+      >
+        <Text style={styles.buttonText}>Add Your Motivation</Text>
+      </TouchableOpacity>
 
       {/* Add Motivation Modal */}
       <Modal
@@ -72,14 +70,17 @@ const MotivationTimeScreen = () => {
             value={motivationQuote}
             onChangeText={(text) => setMotivationQuote(text)}
           />
-          <TouchableOpacity style={styles.input} onPress={openDatePicker}>
+          <TouchableOpacity style={styles.dateInput} onPress={openDatePicker}>
             <Text>Date: {selectedDate.toLocaleDateString()}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.input} onPress={openTimePicker}>
+          <TouchableOpacity style={styles.dateInput} onPress={openTimePicker}>
             <Text>Time: {selectedTime.toLocaleTimeString()}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.saveButton} onPress={handleSaveMotivation}>
             <Text style={styles.buttonText}>Save Motivation</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={() => setShowAddMotivationModal(false)}>
+            <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -99,13 +100,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  addMotivationContainer: {
-    marginBottom: 20,
-  },
   addButton: {
     backgroundColor: '#72c17d',
     padding: 15,
     borderRadius: 8,
+    marginBottom: 20,
   },
   buttonText: {
     color: 'white',
@@ -122,17 +121,34 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#333',
   },
   input: {
     backgroundColor: 'white',
     padding: 15,
     borderRadius: 8,
     marginBottom: 20,
+    width: '80%',
+  },
+  dateInput: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+    width: '80%',
   },
   saveButton: {
     backgroundColor: '#72c17d',
     padding: 15,
     borderRadius: 8,
+    marginBottom: 10,
+    width: '80%',
+  },
+  cancelButton: {
+    backgroundColor: '#e74c3c',
+    padding: 15,
+    borderRadius: 8,
+    width: '80%',
   },
 });
 
