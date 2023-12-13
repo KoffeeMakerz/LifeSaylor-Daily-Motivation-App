@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, DatePickerAndroid, TimePickerAndroid } from 'react-native';
 
+
 const MotivationTimeScreen = () => {
   const [showAddMotivationModal, setShowAddMotivationModal] = useState(false);
   const [motivationQuote, setMotivationQuote] = useState('');

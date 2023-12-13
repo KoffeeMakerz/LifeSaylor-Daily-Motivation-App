@@ -118,7 +118,11 @@ const Dashboard = ({ route }) => {
           <Text style={styles.bottomNavItemText}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.bottomNavItem}>
+        <TouchableOpacity style={styles.bottomNavItem}
+         onPress={() => {
+    navigation.navigate('Reels'); // Navigate to the 'Settings' screen
+  }}>
+
           <Image source={require("../../../assets/icons/quotesIcon.png")} style={styles.bottomNavItemIcon} />
           <Text style={styles.bottomNavItemText}>Quotes</Text>
         </TouchableOpacity>
