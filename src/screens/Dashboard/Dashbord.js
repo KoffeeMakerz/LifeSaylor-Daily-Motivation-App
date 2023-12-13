@@ -127,7 +127,11 @@ const Dashboard = ({ route }) => {
           <Text style={styles.bottomNavItemText}>Quotes</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.bottomNavItem}>
+        <TouchableOpacity style={styles.bottomNavItem}
+            onPress={() => {
+            navigation.navigate('Settings'); // Navigate to the 'Settings' screen
+          }}
+        >
           <Image source={require("../../../assets/icons/discoverIcon.png")} style={styles.bottomNavItemIcon} />
           <Text style={styles.bottomNavItemText}>Discover</Text>
         </TouchableOpacity>
