@@ -24,6 +24,7 @@ import Dashboard from '../screens/Dashboard/Dashbord';
 import Settings from '../screens/Settings/Settings';
 import MotivationTimeScreen from '../screens/MotivationTimeScreen/MotivationTimeScreen';
 import Reels from '../screens/Reels/Reels';
+import DiscoverScreen from '../screens/DiscoverScreen/DiscoverScreen';
 
 const Stack = createStackNavigator();
 
@@ -64,6 +65,7 @@ function MainNavigator() {
       <Stack.Screen name='Settings' component={Settings} options={{ headerShown: false }}/>
       <Stack.Screen name='MotivationTimeScreen' component={MotivationTimeScreen} options={{ headerShown: false }}/>
       <Stack.Screen name='Reels' component={Reels} options={{ headerShown: false }}/>
+      <Stack.Screen name='DiscoverScreen' component={DiscoverScreen} options={{ headerShown: false }}/>
 
     </Stack.Navigator>
   );

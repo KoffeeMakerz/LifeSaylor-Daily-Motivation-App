@@ -129,7 +129,7 @@ const Dashboard = ({ route }) => {
 
         <TouchableOpacity style={styles.bottomNavItem}
             onPress={() => {
-            navigation.navigate('Settings'); // Navigate to the 'Settings' screen
+            navigation.navigate('DiscoverScreen'); // Navigate to the 'Settings' screen
           }}
         >
           <Image source={require("../../../assets/icons/discoverIcon.png")} style={styles.bottomNavItemIcon} />
