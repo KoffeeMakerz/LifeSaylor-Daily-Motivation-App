@@ -1,47 +1,86 @@
-// ReelsScreen.js
-
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-// import YouTube from 'react-native-youtube';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Share } from 'react-native';
+import { WebView } from 'react-native-webview';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Reels = () => {
-  const navigation = useNavigation();
-  const [currentPage, setCurrentPage] = useState(1);
+  const webViewRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [pageTitle, setPageTitle] = useState('');
 
-  const navigateToNextPage = () => {
-    setCurrentPage(currentPage + 1);
+  const goBack = () => {
+    if (webViewRef.current) {
+      webViewRef.current.goBack();
+    }
   };
 
-  const navigateToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+  const goForward = () => {
+    if (webViewRef.current) {
+      webViewRef.current.goForward();
     }
+  };
+
+  const reload = () => {
+    if (webViewRef.current) {
+      webViewRef.current.reload();
+    }
+  };
+
+  const sharePage = async () => {
+    try {
+      const url = 'https://www.youtube.com/shorts/9v6r1VQ0H7U';
+      await Share.share({
+        message: `Check out this article: ${pageTitle}\n${url}`,
+        url: url,
+      });
+    } catch (error) {
+      console.error('Error sharing page:', error.message);
+    }
+  };
+
+  const handleLoadStart = () => {
+    setLoading(true);
+  };
+
+  const handleLoadEnd = (syntheticEvent) => {
+    setLoading(false);
+    const { nativeEvent } = syntheticEvent;
+    setPageTitle(nativeEvent.title || 'Discover');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Reels Screen</Text>
-      
-      {/* YouTube Video
-      <YouTube
-        videoId="YOUR_YOUTUBE_VIDEO_ID_HERE" // Replace with your YouTube video ID
-        style={{ alignSelf: 'stretch', height: 200 }}
-      /> */}
-
-      {/* Page indicator */}
-      <Text style={styles.pageIndicator}>Video Page {currentPage}</Text>
-
-      {/* Content for each page */}
-      <View style={styles.contentContainer}>
-        {/* You can replace this with your actual video component */}
-        <Text style={styles.videoContent}>Video Content for Page {currentPage}</Text>
+      <View style={styles.header}>
+        
       </View>
 
-      {/* Navigation buttons */}
-      <View style={styles.buttonContainer}>
-        <Button title="Previous" onPress={navigateToPreviousPage} disabled={currentPage === 1} />
-        <Button title="Next" onPress={navigateToNextPage} />
+      <WebView
+        ref={webViewRef}
+        source={{ uri: 'https://www.youtube.com/shorts/9v6r1VQ0H7U' }}
+        style={styles.webview}
+        onLoadStart={handleLoadStart}
+        onLoadEnd={handleLoadEnd}
+      />
+
+      {loading && (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#72c17d" />
+        </View>
+      )}
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button} onPress={goBack} disabled={loading}>
+          <Icon name="navigate-before" size={24} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={goForward} disabled={loading}>
+          <Icon name="navigate-next" size={24} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={reload} disabled={loading}>
+          <Icon name="refresh" size={24} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={sharePage} disabled={loading}>
+          <Icon name="share" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -50,30 +89,36 @@ const Reels = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+  },
+  header: {
+    padding: 10,
+    backgroundColor: '#72c17d',
     alignItems: 'center',
   },
   headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  pageIndicator: {
+    color: '#fff',
     fontSize: 18,
-    marginVertical: 10,
+    fontWeight: 'bold',
   },
-  contentContainer: {
+  webview: {
+    flex: 1,
+  },
+  loaderContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
-  videoContent: {
-    fontSize: 16,
-  },
-  buttonContainer: {
+  footer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '80%',
-    marginTop: 20,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#72c17d',
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
   },
 });
 
