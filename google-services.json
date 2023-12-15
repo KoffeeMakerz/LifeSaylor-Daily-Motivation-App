@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "785719210869",
+    "project_id": "lifesaylor-daily-motivation",
+    "storage_bucket": "lifesaylor-daily-motivation.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785719210869:android:29c0e014f02218b624993c",
+        "android_client_info": {
+          "package_name": "life.saylor.daily.motivation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtVgMBx_JatX8E6uOOpBmdhuBEseslbUw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Instafood",
-    "slug": "instafood-recipes-app",
-    "description": "React Native Recipes App Demo. Download source code for free at https://www.instamobile.io . You can also check out the Swift version at https://www.iosapptemplates.com and the Kotlin version at https://www.instakotlin.com .",
+    "name": "LifeSaylor Daily Motivation",
+    "slug": "lifesaylor-daily-motivation",
+    "description": "Unleash the power within you to make every day extraordinary with our uplifting app designed to fuel your motivation and boost your spirit.",
     "privacy": "public",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,13 +23,33 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "life.saylor.daily.motivation",
+      "permissions": [
+        "NOTIFICATIONS",
+        "USER_FACING_NOTIFICATIONS",
+        "BACKGROUND_FETCH",
+        "RECEIVE_BOOT_COMPLETED",
+        "WAKE_LOCK"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d3741120-58a7-4134-9e2b-cd334e63f019"
+      }
+    }
+  },
+  "extra": {
+    "eas": {
+      "projectId": "d3741120-58a7-4134-9e2b-cd334e63f019"
     }
   }
 }
