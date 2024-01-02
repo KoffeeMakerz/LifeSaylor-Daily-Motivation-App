@@ -1,18 +1,40 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Animated } from 'react-native';
 
 const WelcomeScreen = (props) => {
   const { navigation } = props;
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
-  // Render the WelcomeScreen content
+  useEffect(() => {
+    Animated.timing(
+      fadeAnim,
+      {
+        toValue: 1, // Animate to opacity: 1 (visible)
+        duration: 2000, // 2000ms
+        useNativeDriver: true, // Add this line
+      }
+    ).start();
+  }, [fadeAnim]);
+
   return (
     <View style={styles.container}>
+      <Animated.Image
+        source={require('../../../assets/Logo.png')}
+        style={[
+          styles.logo,
+          { opacity: fadeAnim } // Bind opacity to animated value
+        ]}
+      />
+
       <Text style={styles.title}>
-        Welcome to <Text style={styles.coloredText}>LifeSaylor</Text> {'\n'} Daily Motivation
+        Welcome to {'\n'} LifeSaylor Daily Motivation
       </Text>
 
-      <TouchableOpacity style={styles.startButton} onPress={() => navigation.navigate("PrivacyScreen")}>
-        <Text style={styles.buttonText}>Let's Start</Text>
+      <TouchableOpacity
+        style={styles.startButton}
+        onPress={() => navigation.navigate("HomeScreen")}
+      >
+        <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
     </View>
   );
@@ -25,23 +47,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
   },
-  title: {
-    fontSize: 35,
-    fontWeight: 'bold',
-    marginTop: 100,
-    marginBottom: 140, // Increased space between the text and the button
-    color: 'black',
-    textAlign: 'center', // Align text to the center
+  logo: {
+    width: 250,
+    height: 250,
+    marginBottom: -30,
   },
-  coloredText: {
-    color: '#72c17d', // Color for "LifeSaylor"
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 20,
+    color: 'black',
+    textAlign: 'center',
   },
   startButton: {
     backgroundColor: '#72c17d',
-    paddingVertical: 10,
+    paddingVertical: 15,
     paddingHorizontal: 75,
-    borderRadius: 30,
-    alignSelf: 'center',
+    borderRadius: 25,
+    marginTop: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -53,7 +76,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 17,
+    fontSize: 16,
     textAlign: 'center',
   },
 });
