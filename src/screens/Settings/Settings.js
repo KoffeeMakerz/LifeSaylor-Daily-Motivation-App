@@ -16,6 +16,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 
 const SettingsScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [showMotivationModal, setShowMotivationModal] = useState(false);
   const [motivationTimes, setMotivationTimes] = useState({
     Default: { checked: false, time: new Date() },
@@ -35,6 +36,9 @@ const SettingsScreen = () => {
     const newStatus = !notificationsEnabled;
     setNotificationsEnabled(newStatus);
     setNotificationStatusMessage(newStatus ? 'Notifications ON' : 'Notifications OFF');
+  };
+  const toggleDarkMode = () => {
+    setDarkModeEnabled(!darkModeEnabled);
   };
 
   const handleCheckboxToggle = (category) => {
@@ -82,23 +86,16 @@ const SettingsScreen = () => {
   ];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Settings</Text>
+    <ScrollView contentContainerStyle={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
+      <Text style={[styles.header, darkModeEnabled && styles.darkModeText]}>Settings</Text>
 
-      {/* Change Avatar Option */}
-      <TouchableOpacity
-        style={styles.settingItem}
-        onPress={() => setShowAvatarModal(true)}
-      >
-        <Text style={styles.settingText}>Change Avatar</Text>
-      </TouchableOpacity>
 
       {/* Change User Name Option */}
       <TouchableOpacity
         style={styles.settingItem}
         onPress={() => setShowUserNameModal(true)}
       >
-        <Text style={styles.settingText}>Change User Name</Text>
+       <Text style={[styles.settingText, darkModeEnabled && styles.darkModeText]}>Change User Name</Text>
       </TouchableOpacity>
 
       {/* Motivation Settings Option */}
@@ -106,12 +103,12 @@ const SettingsScreen = () => {
         style={styles.settingItem}
         onPress={() => navigate('MotivationTimeScreen')}
       >
-        <Text style={styles.settingText}>Motivation Settings</Text>
+      <Text style={[styles.settingText, darkModeEnabled && styles.darkModeText]}>Motivation Settings</Text>
       </TouchableOpacity>
 
       {/* Notifications Option */}
       <View style={styles.settingItem}>
-        <Text style={styles.settingText}>Notifications</Text>
+        <Text style={[styles.settingText, darkModeEnabled && styles.darkModeText]}>Notifications</Text>
         <Switch
           value={notificationsEnabled}
           onValueChange={toggleNotifications}
@@ -119,10 +116,21 @@ const SettingsScreen = () => {
           thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
         />
       </View>
+      <View style={styles.settingItem}>
+      <Text style={[styles.settingText, darkModeEnabled && styles.darkModeText]}>Dark Mode</Text>
+        <Switch
+          value={darkModeEnabled}
+          onValueChange={toggleDarkMode}
+          trackColor={{ false: '#767577', true: '#72c17d' }}
+          thumbColor={darkModeEnabled ? '#f4f3f4' : '#f4f3f4'}
+        />
+      </View>
+
+   
 
       {/* Notification Status */}
       {notificationStatusMessage !== '' && (
-        <Text style={styles.notificationStatus}>{notificationStatusMessage}</Text>
+        <Text style={[styles.notificationStatus, darkModeEnabled && styles.darkModeText]}>{notificationStatusMessage}</Text>
       )}
 
       {/* Save Settings Button */}
@@ -132,7 +140,7 @@ const SettingsScreen = () => {
           console.log('Save button pressed', motivationTimes);
         }}
       >
-        <Text style={styles.saveButtonText}>Save Settings</Text>
+        <Text style={[styles.saveButtonText, darkModeEnabled && styles.darkModeText]}>Save Settings</Text>
       </TouchableOpacity>
 
       {/* Avatar Modal */}
@@ -180,6 +188,9 @@ const SettingsScreen = () => {
           >
             <Text style={styles.saveButtonText}>Save User Name</Text>
           </TouchableOpacity>
+          <View style={styles.settingItem}>
+
+      </View>
         </View>
       </Modal>
     </ScrollView>
@@ -187,6 +198,31 @@ const SettingsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  darkModeContainer: {
+    backgroundColor: '#1a1a1a',
+  },
+  darkModeText: {
+    color: '#fff',
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    width: '100%',
+  },
+  settingText: {
+    fontSize: 16,
+    color: '#333',
+  },
   container: {
     flexGrow: 1,
     justifyContent: 'center',

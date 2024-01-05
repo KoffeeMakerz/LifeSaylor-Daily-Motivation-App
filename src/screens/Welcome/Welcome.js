@@ -32,7 +32,7 @@ const WelcomeScreen = (props) => {
 
       <TouchableOpacity
         style={styles.startButton}
-        onPress={() => navigation.navigate("HomeScreen")}
+        onPress={() => navigation.navigate("PrivacyScreen")}
       >
         <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
