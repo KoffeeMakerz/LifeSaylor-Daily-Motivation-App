@@ -80,7 +80,7 @@ function DrawerStack() {
       initialRouteName='Main'
       drawerStyle={{ width: 250 }}
       screenOptions={{ headerShown: false }}
-      drawerContent={({ navigation }) => <DrawerContainer navigation={navigation} />}
+      drawerContent={({ navigation }) => <DrawerContainer navigation={navigation}/>}
     >
       <Drawer.Screen name='Main' component={MainNavigator} />
     </Drawer.Navigator>

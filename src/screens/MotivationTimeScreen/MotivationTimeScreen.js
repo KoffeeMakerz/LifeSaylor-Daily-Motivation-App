@@ -1,48 +1,76 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, DatePickerAndroid, TimePickerAndroid } from 'react-native';
-
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MotivationTimeScreen = () => {
   const [showAddMotivationModal, setShowAddMotivationModal] = useState(false);
   const [motivationQuote, setMotivationQuote] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const [motivations, setMotivations] = useState([]);
 
-  const openDatePicker = async () => {
+  useEffect(() => {
+    // Load saved motivations from AsyncStorage when the component mounts
+    loadMotivations();
+  }, []);
+
+  const loadMotivations = async () => {
     try {
-      const { action, year, month, day } = await DatePickerAndroid.open({
-        date: selectedDate,
-      });
-      if (action !== DatePickerAndroid.dismissedAction) {
-        const newDate = new Date(year, month, day);
-        setSelectedDate(newDate);
+      const storedMotivations = await AsyncStorage.getItem('@motivations');
+      if (storedMotivations) {
+        setMotivations(JSON.parse(storedMotivations));
       }
-    } catch ({ code, message }) {
-      console.warn('Cannot open date picker', message);
+    } catch (error) {
+      console.error('Error loading motivations from AsyncStorage:', error);
     }
   };
 
-  const openTimePicker = async () => {
+  const saveMotivation = async () => {
     try {
-      const { action, hour, minute } = await TimePickerAndroid.open({
-        hour: selectedTime.getHours(),
-        minute: selectedTime.getMinutes(),
-        is24Hour: false,
-      });
-      if (action !== TimePickerAndroid.dismissedAction) {
-        const newTime = new Date();
-        newTime.setHours(hour, minute);
-        setSelectedTime(newTime);
-      }
-    } catch ({ code, message }) {
-      console.warn('Cannot open time picker', message);
+      const newMotivation = {
+        quote: motivationQuote,
+        date: selectedDate.toLocaleDateString(),
+        time: selectedDate.toLocaleTimeString(),
+      };
+
+      // Save the new motivation to AsyncStorage
+      const updatedMotivations = [...motivations, newMotivation];
+      await AsyncStorage.setItem('@motivations', JSON.stringify(updatedMotivations));
+
+      // Update the state and close the modal
+      setMotivations(updatedMotivations);
+      setShowAddMotivationModal(false);
+    } catch (error) {
+      console.error('Error saving motivation to AsyncStorage:', error);
     }
   };
 
-  const handleSaveMotivation = () => {
-    // Save the motivation and close the modal
-    // You can implement your saving logic here
-    setShowAddMotivationModal(false);
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisible(false);
+  };
+
+  const handleDateConfirm = (date) => {
+    setSelectedDate(date);
+    hideDatePicker();
+  };
+
+  const showTimePicker = () => {
+    setTimePickerVisible(true);
+  };
+
+  const hideTimePicker = () => {
+    setTimePickerVisible(false);
+  };
+
+  const handleTimeConfirm = (time) => {
+    setSelectedDate(time);
+    hideTimePicker();
   };
 
   return (
@@ -71,20 +99,42 @@ const MotivationTimeScreen = () => {
             value={motivationQuote}
             onChangeText={(text) => setMotivationQuote(text)}
           />
-          <TouchableOpacity style={styles.dateInput} onPress={openDatePicker}>
+          <TouchableOpacity style={styles.dateInput} onPress={showDatePicker}>
             <Text>Date: {selectedDate.toLocaleDateString()}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.dateInput} onPress={openTimePicker}>
-            <Text>Time: {selectedTime.toLocaleTimeString()}</Text>
+          <TouchableOpacity style={styles.dateInput} onPress={showTimePicker}>
+            <Text>Time: {selectedDate.toLocaleTimeString()}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveMotivation}>
+          <TouchableOpacity style={styles.saveButton} onPress={saveMotivation}>
             <Text style={styles.buttonText}>Save Motivation</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.cancelButton} onPress={() => setShowAddMotivationModal(false)}>
             <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="date"
+          onConfirm={handleDateConfirm}
+          onCancel={hideDatePicker}
+        />
+        <DateTimePickerModal
+          isVisible={isTimePickerVisible}
+          mode="time"
+          onConfirm={handleTimeConfirm}
+          onCancel={hideTimePicker}
+        />
       </Modal>
+
+      {/* Display saved motivations */}
+      <View style={styles.savedMotivationsContainer}>
+        <Text style={styles.savedMotivationsHeader}>Saved Motivations:</Text>
+        {motivations.map((motivation, index) => (
+          <Text key={index} style={styles.savedMotivationText}>
+            {motivation.quote} - {motivation.date} {motivation.time}
+          </Text>
+        ))}
+      </View>
     </View>
   );
 };
@@ -152,5 +202,6 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 });
+
 
 export default MotivationTimeScreen;

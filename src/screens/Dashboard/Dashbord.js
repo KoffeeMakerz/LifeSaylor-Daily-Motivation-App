@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView,View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { Card } from '@rneui/themed';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-
-
 const Dashboard = ({ route }) => {
-  // Assuming you passed the user's name as a parameter when navigating to this screen
-  // const userName = route.params.userName;
-
   const [greeting, setGreeting] = useState('');
   const [motivationTitle, setMotivationTitle] = useState('');
   const [userName, setUserName] = useState('');
   const navigation = useNavigation();
-
 
   const motivationalQuotes = [
     "Seize the day; it's yours.",
@@ -64,92 +58,100 @@ const Dashboard = ({ route }) => {
   };
 
   return (
-    
     <View style={styles.container}>
       <View style={styles.container2}>
-      <View style={styles.profileContainer}>
-        <Image source={require("../../../assets/icons/man.png")} style={styles.btnIcon} />     
-        <View style={styles.profileContainer1}><View><Text style={styles.greetingText}>Hello,{userName}</Text></View>
-        <View><Text style={styles.greetingText}>{greeting}</Text></View></View>
-      </View>
-<View>
-      <View style={styles.card}>
-      
-      
-      <Card.Title><Text style={styles.motivationTitle}>{`"${motivationTitle}"`}</Text></Card.Title>
-        <Card.Divider/>
-        <View style={{position:"relative",alignItems:"center"}}>
-          <Image
-              style={{width:200,height:200,borderRadius:10,}}
+        <View style={styles.profileContainer}>
+          <Image source={require("../../../assets/icons/man.png")} style={styles.btnIcon} />
+          <View style={styles.profileContainer1}>
+            <View>
+              <Text style={[styles.greetingText, { color: 'black' }]}>Hello, {userName}</Text>
+            </View>
+            <View>
+              <Text style={[styles.greetingText, { color: 'black' }]}>{greeting}</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.card}>
+          <Card.Title>
+            <Text style={[styles.motivationTitle, { color: 'black' }]}>
+              {`"${motivationTitle}"`}
+            </Text>
+          </Card.Title>
+          <Card.Divider />
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
               resizeMode="contain"
-              source={{ uri: "https://cdn.pixabay.com/photo/2017/08/15/12/04/helping-each-other-2643652_1280.jpg" }}
+              source={{
+                uri: "https://cdn.pixabay.com/photo/2017/08/15/12/04/helping-each-other-2643652_1280.jpg"
+              }}
             />
-    </View>
-         </View>
-
-
-      <View style={styles.buttonContainer}>
-
-
-
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button, { maxWidth: '100%' }]}
+            onPress={() => {
+              // Add functionality for the "ADD your own quote" button here
+              // For example, you can navigate to a screen where users can add their own quote
+              console.log("ADD your own quote button pressed");
+            }}
+          >
+            <Text style={[styles.buttonText, { color: 'black' }]}>
+              ADD your own quote
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      </View>
-      <View style={styles.buttonContainer}>
-
-
-        
-  <TouchableOpacity
-    style={[styles.button, { maxWidth: '100%' }]} // Set max width to 100%
-    onPress={() => {
-      // Add functionality for the "ADD your own quote" button here
-      // For example, you can navigate to a screen where users can add their own quote
-      console.log("ADD your own quote button pressed");
-    }}
-  >
-    <Text style={styles.buttonText}>ADD your own quote</Text>
-  </TouchableOpacity>
-</View>
-</View>
-
       {/* Bottom Navigation */}
       <View style={styles.bottomNavigation}>
         <TouchableOpacity style={styles.bottomNavItem}>
-          <Image source={require("../../../assets/icons/homeIcon.png")} style={styles.bottomNavItemIcon} />
-          <Text style={styles.bottomNavItemText}>Home</Text>
+          <Image
+            source={require("../../../assets/icons/homeIcon.png")}
+            style={styles.bottomNavItemIcon}
+          />
+          <Text style={[styles.bottomNavItemText, { color: 'black' }]}>
+            Home
+          </Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.bottomNavItem}
-         onPress={() => {
-    navigation.navigate('Reels'); // Navigate to the 'Settings' screen
-  }}>
-
-          <Image source={require("../../../assets/icons/quotesIcon.png")} style={styles.bottomNavItemIcon} />
-          <Text style={styles.bottomNavItemText}>Quotes</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.bottomNavItem}
-            onPress={() => {
-            navigation.navigate('DiscoverScreen'); // Navigate to the 'Settings' screen
-          }}
-        >
-          <Image source={require("../../../assets/icons/discoverIcon.png")} style={styles.bottomNavItemIcon} />
-          <Text style={styles.bottomNavItemText}>Discover</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity
-  style={styles.bottomNavItem}
-  onPress={() => {
-    navigation.navigate('Settings'); // Navigate to the 'Settings' screen
-  }}
->
-          <Image source={require("../../../assets/icons/settingsIcon.png")} style={styles.bottomNavItemIcon} />
-          <Text style={styles.bottomNavItemText}>Settings</Text>
+          style={styles.bottomNavItem}
+          onPress={() => navigation.navigate('Reels')}
+        >
+          <Image
+            source={require("../../../assets/icons/quotesIcon.png")}
+            style={styles.bottomNavItemIcon}
+          />
+          <Text style={[styles.bottomNavItemText, { color: 'black' }]}>
+            Quotes
+          </Text>
         </TouchableOpacity>
-        
+        <TouchableOpacity
+          style={styles.bottomNavItem}
+          onPress={() => navigation.navigate('DiscoverScreen')}
+        >
+          <Image
+            source={require("../../../assets/icons/discoverIcon.png")}
+            style={styles.bottomNavItemIcon}
+          />
+          <Text style={[styles.bottomNavItemText, { color: 'black' }]}>
+            Discover
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bottomNavItem}
+          onPress={() => navigation.navigate('Settings')}
+        >
+          <Image
+            source={require("../../../assets/icons/settingsIcon.png")}
+            style={styles.bottomNavItemIcon}
+          />
+          <Text style={[styles.bottomNavItemText, { color: 'black ' }]}>
+            Settings
+          </Text>
+        </TouchableOpacity>
       </View>
-      
     </View>
-    
   );
 };
 
@@ -158,43 +160,46 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    padding:45,
+    backgroundColor: 'white',
+    padding: 45,
   },
-
+  container2: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
   profileContainer: {
-    
-    alignSelf:'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    display: 'flex',
     width: '100%',
-    marginBottom: 10, // Adjust this value to reduce the gap
+    marginBottom: 10,
   },
   profileContainer1: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     alignSelf: 'center',
-    display: 'flex',
     justifyContent: 'flex-start',
     textAlign: 'left',
-    marginLeft: 10, // Adjust this value to reduce the gap
+    marginLeft: 10,
   },
   btnIcon: {
     width: 80,
     height: 80,
     alignSelf: 'center',
   },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
   greetingText: {
     fontSize: 20,
     marginVertical: 1,
-    textAlign:'left',
+    textAlign: 'left',
+  },
+  card: {
+    borderWidth: 1,
+    padding: 8,
+    borderRadius: 20,
+    borderColor: '#72c17d',
+    marginTop: 10,
+    width: '100%',
   },
   motivationTitle: {
     fontSize: 22,
@@ -202,6 +207,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 10,
     textAlign: 'center',
+  },
+  imageContainer: {
+    position: 'relative',
+    alignItems: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -215,16 +229,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginHorizontal: 5,
     alignItems: 'center',
+    width: '100%',
   },
   buttonText: {
-    color: 'white',
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 8,
-  },
-  buttonIcon: {
-    width: 24,
-    height: 24,
   },
   bottomNavigation: {
     flexDirection: 'row',
@@ -246,17 +257,9 @@ const styles = StyleSheet.create({
     height: 24,
   },
   bottomNavItemText: {
-    color: 'white',
+    color: 'black',
     fontSize: 14,
   },
-  card:{
-    borderWidth: 1,
-    padding:8,
-    borderRadius:20,
-    borderColor:'#72c17d' ,
-    marginTop:10,
-    
-  }
 });
 
 export default Dashboard;
