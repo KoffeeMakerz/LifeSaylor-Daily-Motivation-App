@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleNotificationAsync } from 'expo-notifications';
@@ -14,7 +14,6 @@ const MotivationTimeScreen = () => {
   const [motivations, setMotivations] = useState([]);
 
   useEffect(() => {
-    // Load saved motivations from AsyncStorage when the component mounts
     loadMotivations();
   }, []);
 
@@ -25,7 +24,7 @@ const MotivationTimeScreen = () => {
         setMotivations(JSON.parse(storedMotivations));
       }
     } catch (error) {
-      console.log('Error loading motivations from AsyncStorage:', );
+      console.log('Error loading motivations from AsyncStorage:', error);
     }
   };
 
@@ -37,14 +36,11 @@ const MotivationTimeScreen = () => {
         time: selectedDate.toLocaleTimeString(),
       };
 
-      // Save the new motivation to AsyncStorage
       const updatedMotivations = [...motivations, newMotivation];
       await AsyncStorage.setItem('@motivations', JSON.stringify(updatedMotivations));
 
-      // Schedule notification
       await scheduleNotification(newMotivation);
 
-      // Update the state and close the modal
       setMotivations(updatedMotivations);
       setShowAddMotivationModal(false);
     } catch (error) {
@@ -59,15 +55,19 @@ const MotivationTimeScreen = () => {
       data: { motivation },
     };
 
-    const trigger = new Date(moment(motivation.date, 'M/D/YYYY').format('YYYY-MM-DD') + 'T' + moment(motivation.time, 'h:mm:ss A').format('HH:mm:ss'));
-      trigger.setSeconds(0)
+    const trigger = new Date(
+      moment(motivation.date, 'M/D/YYYY').format('YYYY-MM-DD') +
+        'T' +
+        moment(motivation.time, 'h:mm:ss A').format('HH:mm:ss')
+    );
+    trigger.setSeconds(0);
+
     try {
       const not1 = await scheduleNotificationAsync({
         content: notificationContent,
         trigger,
-
       });
-      console.log('Notification scheduled successfully!',not1);
+      console.log('Notification scheduled successfully!', not1);
     } catch (error) {
       console.error('Error scheduling notification:', error);
     }
@@ -97,6 +97,23 @@ const MotivationTimeScreen = () => {
   const handleTimeConfirm = (time) => {
     setSelectedDate(time);
     hideTimePicker();
+  };
+
+  const editMotivation = async (index) => {
+    // Implement functionality to edit motivation here
+  };
+
+  const deleteMotivation = async (index) => {
+    try {
+      const updatedMotivations = [...motivations];
+      updatedMotivations.splice(index, 1);
+
+      await AsyncStorage.setItem('@motivations', JSON.stringify(updatedMotivations));
+
+      setMotivations(updatedMotivations);
+    } catch (error) {
+      console.error('Error deleting motivation from AsyncStorage:', error);
+    }
   };
 
   return (
@@ -134,7 +151,10 @@ const MotivationTimeScreen = () => {
           <TouchableOpacity style={styles.saveButton} onPress={saveMotivation}>
             <Text style={styles.buttonText}>Save Motivation</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={() => setShowAddMotivationModal(false)}>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => setShowAddMotivationModal(false)}
+          >
             <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -153,14 +173,31 @@ const MotivationTimeScreen = () => {
       </Modal>
 
       {/* Display saved motivations */}
-      <View style={styles.savedMotivationsContainer}>
-        <Text style={styles.savedMotivationsHeader}>Saved Motivations:</Text>
+      <Text style={styles.savedMotivationsHeader}>Saved Motivations:</Text>
+      <ScrollView style={styles.savedMotivationsContainer}>
+        
         {motivations.map((motivation, index) => (
-          <Text key={index} style={styles.savedMotivationText}>
-            {motivation.quote} - {motivation.date} {motivation.time}
-          </Text>
+          <View key={index} style={styles.savedMotivationContainer}>
+            <Text style={styles.savedMotivationText}>
+              {motivation.quote} - {motivation.date} {motivation.time}
+            </Text>
+            <View style={styles.editDeleteButtonsContainer}>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => editMotivation(index)}
+              >
+                <Text style={styles.buttonText}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => deleteMotivation(index)}
+              >
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -226,6 +263,45 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     width: '80%',
+  },
+  savedMotivationsContainer: {
+    marginTop: 20,
+    width: '80%',
+    maxHeight: '50%',
+  },
+  savedMotivationsHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  savedMotivationContainer: {
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+  },
+  savedMotivationText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  editDeleteButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  editButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    backgroundColor: '#e74c3c',
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
   },
 });
 
