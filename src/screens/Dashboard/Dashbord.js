@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import { BackHandler, ScrollView, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Card } from '@rneui/themed';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +11,7 @@ const Dashboard = ({ route }) => {
   const navigation = useNavigation();
 
   const motivationalQuotes = [
+    // ... your motivational quotes
     "Seize the day; it's yours.",
     "Believe in your journey.",
     "Success is a series of small wins.",
@@ -38,7 +39,7 @@ const Dashboard = ({ route }) => {
     const getName = async () => {
       const Name = await AsyncStorage.getItem('userName');
       setUserName(Name);
-    }
+    };
     getName();
     if (currentTime >= 5 && currentTime < 12) {
       setGreeting('Good morning..!');
@@ -50,6 +51,12 @@ const Dashboard = ({ route }) => {
 
     // Set a random motivational quote when the component mounts
     setMotivationTitle(getRandomMotivationalQuote());
+
+    // Lock the back button
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => true);
+
+    // Cleanup the event listener on component unmount
+    return () => backHandler.remove();
   }, []);
 
   const getRandomMotivationalQuote = () => {
@@ -59,6 +66,7 @@ const Dashboard = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      {/* ... rest of your component ... */}
       <View style={styles.container2}>
         <View style={styles.profileContainer}>
           <Image source={require("../../../assets/icons/man.png")} style={styles.btnIcon} />
@@ -163,6 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 45,
   },
+  // ... rest of your styles ...
   container2: {
     flex: 1,
     justifyContent: 'flex-start',
@@ -260,6 +269,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 14,
   },
+  
 });
 
 export default Dashboard;
