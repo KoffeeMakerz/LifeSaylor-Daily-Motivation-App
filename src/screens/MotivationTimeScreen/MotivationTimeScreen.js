@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { scheduleNotificationAsync } from 'expo-notifications';
+import moment from 'moment';
 
 const MotivationTimeScreen = () => {
   const [showAddMotivationModal, setShowAddMotivationModal] = useState(false);
@@ -23,7 +25,7 @@ const MotivationTimeScreen = () => {
         setMotivations(JSON.parse(storedMotivations));
       }
     } catch (error) {
-      console.error('Error loading motivations from AsyncStorage:', error);
+      console.log('Error loading motivations from AsyncStorage:', );
     }
   };
 
@@ -39,11 +41,35 @@ const MotivationTimeScreen = () => {
       const updatedMotivations = [...motivations, newMotivation];
       await AsyncStorage.setItem('@motivations', JSON.stringify(updatedMotivations));
 
+      // Schedule notification
+      await scheduleNotification(newMotivation);
+
       // Update the state and close the modal
       setMotivations(updatedMotivations);
       setShowAddMotivationModal(false);
     } catch (error) {
       console.error('Error saving motivation to AsyncStorage:', error);
+    }
+  };
+
+  const scheduleNotification = async (motivation) => {
+    const notificationContent = {
+      title: 'Motivation Reminder',
+      body: motivation.quote,
+      data: { motivation },
+    };
+
+    const trigger = new Date(moment(motivation.date, 'M/D/YYYY').format('YYYY-MM-DD') + 'T' + moment(motivation.time, 'h:mm:ss A').format('HH:mm:ss'));
+      trigger.setSeconds(0)
+    try {
+      const not1 = await scheduleNotificationAsync({
+        content: notificationContent,
+        trigger,
+
+      });
+      console.log('Notification scheduled successfully!',not1);
+    } catch (error) {
+      console.error('Error scheduling notification:', error);
     }
   };
 
@@ -202,6 +228,5 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 });
-
 
 export default MotivationTimeScreen;

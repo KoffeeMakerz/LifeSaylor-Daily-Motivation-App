@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import navigation from '../navigations/RootNavigation'
+
 
 
 export const useNotifications = () => {
@@ -33,6 +33,6 @@ export const handleNotificationAction = async (notificationResponse) => {
   //console.log('handleNotificationAction');
   console.log('notificationResponse', notificationResponse);
   const params = notificationResponse.notification.request.content.data
-  navigation.navigate('Affirmation Slideshow', {params});
+
 };
 
