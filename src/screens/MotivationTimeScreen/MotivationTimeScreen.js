@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleNotificationAsync } from 'expo-notifications';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'; // Import Ionicons and MaterialIcons from Expo vector icons
 import moment from 'moment';
 
 const MotivationTimeScreen = () => {
@@ -55,21 +56,28 @@ const MotivationTimeScreen = () => {
       data: { motivation },
     };
 
-    const trigger = new Date(
-      moment(motivation.date, 'M/D/YYYY').format('YYYY-MM-DD') +
-        'T' +
-        moment(motivation.time, 'h:mm:ss A').format('HH:mm:ss')
-    );
+    const trigger = new Date(moment(motivation.date, 'M/D/YYYY').format('YYYY-MM-DD') + 'T' + moment(motivation.time, 'h:mm:ss A').format('HH:mm:ss'));
     trigger.setSeconds(0);
-
     try {
-      const not1 = await scheduleNotificationAsync({
+      await scheduleNotificationAsync({
         content: notificationContent,
         trigger,
       });
-      console.log('Notification scheduled successfully!', not1);
+      console.log('Notification scheduled successfully!');
     } catch (error) {
       console.error('Error scheduling notification:', error);
+    }
+  };
+
+  const deleteMotivation = async (index) => {
+    try {
+      const updatedMotivations = [...motivations];
+      updatedMotivations.splice(index, 1);
+
+      await AsyncStorage.setItem('@motivations', JSON.stringify(updatedMotivations));
+      setMotivations(updatedMotivations);
+    } catch (error) {
+      console.error('Error deleting motivation from AsyncStorage:', error);
     }
   };
 
@@ -99,35 +107,15 @@ const MotivationTimeScreen = () => {
     hideTimePicker();
   };
 
-  const editMotivation = async (index) => {
-    // Implement functionality to edit motivation here
-  };
-
-  const deleteMotivation = async (index) => {
-    try {
-      const updatedMotivations = [...motivations];
-      updatedMotivations.splice(index, 1);
-
-      await AsyncStorage.setItem('@motivations', JSON.stringify(updatedMotivations));
-
-      setMotivations(updatedMotivations);
-    } catch (error) {
-      console.error('Error deleting motivation from AsyncStorage:', error);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Motivation Time Settings</Text>
 
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setShowAddMotivationModal(true)}
-      >
+      <TouchableOpacity style={styles.addButton} onPress={() => setShowAddMotivationModal(true)}>
+        <MaterialIcons name="add" size={24} color="white" style={styles.buttonIcon} />
         <Text style={styles.buttonText}>Add Your Motivation</Text>
       </TouchableOpacity>
 
-      {/* Add Motivation Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -151,10 +139,7 @@ const MotivationTimeScreen = () => {
           <TouchableOpacity style={styles.saveButton} onPress={saveMotivation}>
             <Text style={styles.buttonText}>Save Motivation</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => setShowAddMotivationModal(false)}
-          >
+          <TouchableOpacity style={styles.cancelButton} onPress={() => setShowAddMotivationModal(false)}>
             <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -172,29 +157,21 @@ const MotivationTimeScreen = () => {
         />
       </Modal>
 
-      {/* Display saved motivations */}
-      <Text style={styles.savedMotivationsHeader}>Saved Motivations:</Text>
       <ScrollView style={styles.savedMotivationsContainer}>
-        
+        <Text style={styles.savedMotivationsHeader}>Saved Motivations:</Text>
         {motivations.map((motivation, index) => (
-          <View key={index} style={styles.savedMotivationContainer}>
-            <Text style={styles.savedMotivationText}>
-              {motivation.quote} - {motivation.date} {motivation.time}
-            </Text>
-            <View style={styles.editDeleteButtonsContainer}>
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={() => editMotivation(index)}
-              >
-                <Text style={styles.buttonText}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => deleteMotivation(index)}
-              >
-                <Text style={styles.buttonText}>Delete</Text>
-              </TouchableOpacity>
+          <View key={index} style={styles.savedMotivationItem}>
+            <View style={styles.motivationContent}>
+              <Text style={styles.savedMotivationQuote}>{motivation.quote}</Text>
+              <Text style={styles.savedMotivationDateTime}>
+                <Text style={{ fontStyle: 'italic', color: '#555' }}>Date:</Text> {motivation.date} {'\n'}
+                <Text style={{ fontStyle: 'italic', color: '#555' }}>Time:</Text>{' '}
+                {moment(motivation.time, 'HH:mm:ss').format('hh:mm A')}
+              </Text>
             </View>
+            <TouchableOpacity onPress={() => deleteMotivation(index)} style={styles.deleteButton}>
+              <Ionicons name="trash-outline" size={24} color="#fff" />
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
@@ -207,18 +184,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f0f8ff', // Light Blue
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 30,
+    marginTop: 80,
+    color: '#2e8b57', // Sea Green
   },
   addButton: {
-    backgroundColor: '#72c17d',
+    backgroundColor: '#32cd32', // Lime Green
     padding: 15,
     borderRadius: 8,
     marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 10,
   },
   buttonText: {
     color: 'white',
@@ -235,73 +219,76 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#fff', // White
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     padding: 15,
     borderRadius: 8,
     marginBottom: 20,
     width: '80%',
   },
   dateInput: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     padding: 15,
     borderRadius: 8,
     marginBottom: 20,
     width: '80%',
   },
   saveButton: {
-    backgroundColor: '#72c17d',
+    backgroundColor: '#32cd32', // Lime Green
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
     width: '80%',
   },
   cancelButton: {
-    backgroundColor: '#e74c3c',
+    backgroundColor: '#e74c3c', // Tomato Red
     padding: 15,
     borderRadius: 8,
     width: '80%',
   },
   savedMotivationsContainer: {
-    marginTop: 20,
+    marginTop: 10,
     width: '80%',
-    maxHeight: '50%',
   },
   savedMotivationsHeader: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#333',
   },
-  savedMotivationContainer: {
-    marginBottom: 10,
+  savedMotivationItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
     padding: 10,
     backgroundColor: '#fff',
     borderRadius: 8,
+    elevation: 3, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
-  savedMotivationText: {
-    fontSize: 16,
-    marginBottom: 5,
+  motivationContent: {
+    flex: 1,
   },
-  editDeleteButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+  savedMotivationQuote: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: '#333',
   },
-  editButton: {
-    backgroundColor: '#3498db',
-    padding: 10,
-    borderRadius: 5,
-    width: '45%',
-    alignItems: 'center',
+  savedMotivationDateTime: {
+    fontSize: 14,
+    textAlign: 'center',
+    color: '#555',
   },
   deleteButton: {
-    backgroundColor: '#e74c3c',
-    padding: 10,
-    borderRadius: 5,
-    width: '45%',
-    alignItems: 'center',
+    backgroundColor: '#e74c3c', // Tomato Red
+    padding: 8,
+    borderRadius: 8,
   },
 });
 
